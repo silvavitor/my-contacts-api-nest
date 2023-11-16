@@ -101,6 +101,9 @@ export class PrismaContactRepository implements ContactRepository {
       throw new NotFoundException({ error: 'Contact not found!' });
     }
 
+    updateContactDto.category_id =
+      updateContactDto.category_id === '' ? null : updateContactDto.category_id;
+
     if (updateContactDto.category_id) {
       if (!isUUID(updateContactDto.category_id)) {
         throw new BadRequestException({ error: 'invalid category' });
