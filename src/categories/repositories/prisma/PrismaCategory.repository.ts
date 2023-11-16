@@ -4,6 +4,7 @@ import { CategoryRepository } from '../category.repository';
 import { PrismaService } from 'src/database/prisma.service';
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -111,6 +112,16 @@ export class PrismaCategoryRepository implements CategoryRepository {
 
     if (!category) {
       throw new NotFoundException({ error: 'Category not found' });
+    }
+
+    const categoryInUse = await this.prisma.contact.findFirst({
+      where: {
+        category_id: id,
+      },
+    });
+
+    if (categoryInUse) {
+      throw new ForbiddenException({ error: 'category attached to contact' });
     }
 
     await this.prisma.category.delete({
