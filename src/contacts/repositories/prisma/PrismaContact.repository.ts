@@ -138,6 +138,16 @@ export class PrismaContactRepository implements ContactRepository {
   }
 
   async remove(id: string) {
+    const contactExist = await this.prisma.contact.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!contactExist) {
+      throw new NotFoundException({ error: 'Contact not found!' });
+    }
+
     await this.prisma.contact.delete({
       where: {
         id,
